@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="UTF-8">
+<!-- Content Header (Page header) -->
+<!--<style>
+    /*所有样式*/
+    .right_cont {
+        margin: 0 auto;
+        padding:5%;
+        width: 80%;
+        background: white;
+
+    }
+    /*横线*/
+    .user_hr {
+        margin-top: 35px;
+        margin-bottom: 20px;
+        border-top: 1px solid #E0E0E0;
+    }
+    /*头像部分*/
+    .header {
+        float: left;
+    }
+    /*头像样式*/
+    .head {
+        width: 125px;
+        height: 125px;
+        border-radius: 50%;
+    }
+    /*修改头像*/
+    .modify {
+        margin-left: 26px;
+        margin-top: 10px;
+    }
+
+    .modify a:link {
+        text-decoration: none;
+    }
+    /*上传文件*/
+    .modify .file {
+        display: flex;
+    }
+    /*右边样式*/
+    .right_c {
+        width:60%;
+        margin-left: 30%;
+    }
+    .left_c{
+        width:20%;
+        float: left;
+    }
+    /*ID样式*/
+    .id_name {
+        color: #999999;
+    }
+    /*竖线样式*/
+    .splits {
+        color: #E0E0E0;
+    }
+    /*属性样式*/
+    .csdn_info {
+        margin-top: 10px;
+    }
+
+    .csdn_info a:link {
+        text-decoration: none;
+    }
+
+    .charge a:link {
+        text-decoration: none;
+    }
+    /*横线*/
+    .user_hr2 {
+        margin-top: 18px;
+        margin-bottom: 12px;
+        border-top: 1px solid #E0E0E0;
+    }
+    /*列表样式*/
+    .self {
+        list-style: none;
+        margin-left: -40px;
+    }
+    /*单项样式*/
+    .self li {
+        margin-top: 6px;
+        margin-bottom: 18px;
+    }
+    .img_ava{
+        margin:6px;
+        width: 50px;
+        height: 50px;
+    }
+    .img_contain{
+        border: 1px dotted #c0c0c0;
+        width: 100%;
+    }
+</style>-->
+<section class="content-header" th:fragment="content-wrapper">
+    <h1>
+        个人资料
+        <small>查看我的信息</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="#">信息</a></li>
+        <li class="active">个人信息</li>
+    </ol>
+</section>
+<div class="right_cont" style="margin-top: 5%">
+    <div class="left_c">
+        <div class="header">
+            <form method="post" enctype="multipart/form-data" id="form1" name="form1" target="id_iframe">
+                <input id="ava" name="file" type="file"  style="display: none;"/>
+                <img id="pic" class="head" th:src="${userSelf.getPicPath()}" alt='avatar'/>  
+                <br/>
+                <input class="btn btn-default" style="margin-left: 17%;margin-top: 6px;" type="button" value="本地上传" id="btn1" onclick="update()"/>
+                <br/>
+                <input class="btn btn-default" style="margin-left: 17%;margin-top: 6px;" type="button" value="历史头像" id="btn2" data-toggle="modal"
+                       data-target="#imgModal"/>
+            </form>
+            <iframe id="id_iframe" name="id_iframe" style="display:none;"></iframe>
+        </div>
+    </div>
+    <div class="right_c">
+        <div class="right_info">
+            <div class="id_card">
+               ID：<span class="id_name" th:text="${userSelf.getId()}"> </span>
+            </div>
+        </div>
+        <div class="csdn_info">
+            简介：<span
+                    style="margin-right: 16px; color: rgb(77, 77, 77); font-size: 14px;" th:text="${userSelf.getDescription()}"></span><br />
+            <div class="user_hr2"></div>
+        </div>
+        <ul class="self">
+            <li>用户名：<span th:text="${userSelf.getUsername()}"></span></li>
+            <li>组织机构：<span th:text="${userSelf.getOrganizationName()}"></span></li>
+            <li>组别：<span th:text="${userSelf.getGroupNames()}"></span></li>
+            <li>角色：<span th:text="${userSelf.getRoleNames()}"></span></li>
+            <li>余额：<span th:text="${userSelf.getMoney()}"></span>
+                <input type="button" class="btn btn-sm active btn-link" value="充值" style="margin-left: 5px;" id="pos" data-toggle="modal"
+                       data-target="#posModal"/></li>
+        </ul>
+    </div>
+</div>
+<script>
+    function update(){
+        if(confirm("确认上传？")){
+            document.form1.action="person/queryImg";
+            document.form1.submit();
+            window.location.reload();
+        }
+    }
+    function native() {
+        document.form1.action="person/onceImg";
+        document.form1.submit();
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#pic").click(function () {
+            $("#ava").click();
+            $("#ava").on("change", function () {
+                var objUrl = getObjectURL(this.files[0]);
+                if (objUrl) {
+                    $("#pic").attr("src", objUrl);
+                }
+            });
+        });
+    });
+    function getObjectURL(file) {
+        var url = null;
+        if (window.createObjectURL != undefined) {
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) {
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) {
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+
+</script>
+<!--历史头像-->
+<div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="editModalLabel">修改头像</h4>
+            </div>
+            <div class="modal-body">
+                <form id="imgForm">
+                    <div class="form-group">
+                        <label class="control-label" for="pic"><span class="asterisk"></span>历史头像:</label>
+                        <div class="modal-body">
+                            <div class="img_contain">
+                                <div class="row clearfix">
+                                    <div class="col-md-2 column" th:each="img : ${picList}">
+                                        <img id="pic1" th:src="${img}" onclick="callMe(this)" alt="" disabled="" class="img_ava"/>
+                                    </div>
+<!--                                    <input type="hidden" id="chooseImg" value="" class="avaImages" style="display:none"/>-->
+                                </div>
+                            </div>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="changeImg" type="button" form="imgForm" class="btn btn-primary" onclick="submitCon()">
+<!--                        data-action="{type:'submit',form:'#imgForm',onclick='submitCon()'">-->
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--余额充值-->
+<!-- 模态框 -->
+<div class="modal fade" id="posModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <span class="modal-title">余额充值</span>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <form id="posForm" name="posForm" method="post">
+                <div class="modal-body">
+                    <strong class="payStrong">输入您要充值的金额:</strong>
+                    <input type="text" id="money" name="money" value="" required/><span
+                        style="margin-left: 3px;">元</span>
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="submit" form="posForm" id="posbtn" class="btn btn-primary">
+                        确定
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--余额充值-->
+<script>
+    $('#posbtn').click(function () {
+        var options = {
+            success:  function(response){
+                showResponse(response);
+            },
+            // other available options:
+            url:       'person/posMoney',         // override for form's 'action' attribute
+            clearForm: true        // clear all form fields after successful submit
+        };
+        $('#posForm').ajaxForm(options);
+
+    });
+
+    // post-submit callback
+    function showResponse(response)  {
+        alert("充值成功");
+        $('#posModal').modal('hide');
+        window.location.reload();
+    }
+
+    /*$(document).ready(function() {
+    var options = {
+        target:        '#output1',   // target element(s) to be updated with server response
+        // beforeSubmit:  showRequest,  // pre-submit callback
+        success:       showResponse,  // post-submit callback
+
+        // other available options:
+        url:       'person/posMoney',         // override for form's 'action' attribute
+        //type:      type        // 'get' or 'post', override for form's 'method' attribute
+        //dataType:  null        // 'xml', 'script', or 'json' (expected server response type)
+        clearForm: true        // clear all form fields after successful submit
+        //resetForm: true        // reset the form after successful submit
+    };
+    $('#posForm').ajaxForm(options);
+
+});*/
+</script>
+
+<!--头像-->
+<script>
+    function callMe(img) {
+        // alert("you choose: "+img.src);
+         $("#pic").attr("src", img.src);
+    }
+    $('#changeImg').click(function () {
+        var imagePath = $("#pic")[0].src;
+        // alert("read: "+imagePath);
+        var path=imagePath.substring(imagePath.lastIndexOf("/")+1);
+        var picPath="img/virtual/"+path;
+        // alert("picPath:"+picPath);
+        var sendData={"picPath":picPath};
+        var options = {
+            // target:        '#output',   // target element(s) to be updated with server response
+            // beforeSubmit:  showRequest,  // pre-submit callback
+            success: function (data) {
+                alert("修改成功");
+                $('#imgModal').modal('hide');
+                window.location.reload();
+            },  // post-submit callback*/
+            // other available options:
+            url:       'person/onceImg',         // override for form's 'action' attribute
+            data: sendData,
+            type:      'post',        // 'get' or 'post', override for form's 'method' attribute
+            //dataType:  null        // 'xml', 'script', or 'json' (expected server response type)
+            clearForm: true,        // clear all form fields after successful submit
+            error: function () {
+                alert("修改失败");
+                $('#imgModal').modal('hide');
+            }
+        };
+        $('#imgForm').ajaxSubmit(options);
+    });
+    /*function submitCon() {
+        var imagePath = $("#pic")[0].src;
+        // alert("read: "+imagePath);
+        var path=imagePath.substring(imagePath.lastIndexOf("/")+1);
+        var picpath="img/virtual/"+path;
+        alert("path:"+picpath);
+        $.ajax({
+            url: 'person/onceImg',
+            type: 'post',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.equals("true")) {
+                    alert("修改成功");
+                } else {
+                    alert("修改失败");
+                }
+                window.location.reload();
+            },
+            error: function () {
+                alert("修改失败");
+            }
+        });
+    }*/
+</script>
+</html>

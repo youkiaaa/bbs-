@@ -1,0 +1,70 @@
+spring:
+  mvc:
+    view: # 视图相关
+      prefix: /templates/
+      suffix: .html
+  output:
+    ansi:
+      enabled: ALWAYS # 输出带颜色的日志信息
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 1
+      max-active: 20
+      min-idle: 1
+      stat-view-servlet:
+        allow: true
+      test-on-borrow: true
+    password: 123456
+    url: jdbc:mysql://localhost:3306/wetech_admin
+    username: root
+    thymeleaf:
+      cache: false
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  resources:
+    static-locations:
+      classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,D:/work/test/img/
+
+mybatis: # mybatis 配置
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.atyume.modules.*.po
+  configuration:
+    map-underscore-to-camel-case: true
+
+mapper: # 通用 Mapper 配置
+  identity: MYSQL
+  mappers: com.atyume.core.utils.MyMapper
+  not-empty: false
+
+pagehelper: # 分页插件配置
+  helperDialect: mysql
+  params: count=countSql
+  reasonable: true
+  supportMethodsArguments: true
+
+password: #shiro
+  algorithmName: md5
+  hashIterations: 2
+
+debug: true
+logging:
+  level:
+    root: debug
+    com:
+      atyume:
+        mapper: trace
+server:
+  port: 8081
+  servlet:
+    context-path: /bbs-RBAC
+
+img:
+  location:
+    D:/work/test/img
+
+web.upload-path:
+  D:/work/test/img/
+

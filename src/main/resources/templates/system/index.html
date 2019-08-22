@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
+    <title>bbs</title>
+</head>
+<!--<style>
+    a{ text-decoration:none}
+    .blog-list .item .intro {
+        font-size: 0.875rem;
+    }
+    .blog-list .item .more-link {
+        font-size: 0.8125rem
+    }
+    .media-body {
+        flex: 1
+    }
+    .media {
+        display: flex;
+        align-items: flex-start;
+        margin: 2%;
+    }
+    .mb-5{
+        margin-bottom: 3rem !important
+    }
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto
+    }
+    @media (min-width: 768px) {
+        .p-md-5 {
+            padding: 3rem !important
+        }
+    }
+    @media (min-width: 576px) {
+        .container {
+            max-width: 540px
+        }
+    }
+
+    @media (min-width: 768px) {
+        .container {
+            max-width: 720px
+        }
+    }
+
+    @media (min-width: 992px) {
+        .container {
+            max-width: 960px
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .container {
+            max-width: 1140px
+        }
+    }
+</style>-->
+<body>
+<section class="blog-list px-3 py-5 p-md-5">
+    <div class="container">
+        <div class="item mb-5" style="border: 1px dotted #919191;background: white" th:each="bbs : ${bbsVoList}">
+            <div class="media">
+                <img class="img_bbs" th:src="${bbs.getPicPath()}" alt="image"/>
+                <div class="ma-body">
+                    <dd style="font-size: 24px;font-weight: bold;"><a href="#" style="color: black"><p th:text="${bbs.getTitle()}"></p></a></dd>
+                    <dd>By&nbsp;&nbsp;&nbsp;<small style="color: #c0c0c0;"><b th:text="${bbs.getUsername()}"></b></small></dd>
+                    <br/>
+                    <dd class="intro"><p th:text="${bbs.getMain()}"></p></dd>
+                    <dd style="float:right;margin-right: 5%">
+                        <!--打赏-->
+                        <button type="button" class="btn btn-default" id="reward" data-toggle="modal"
+                                data-target="#rewModal" th:data-orderid="${bbs.getUserid()}">
+                        <span class="glyphicon glyphicon-gift"></span>
+                        </button>
+                        <!--点赞-->
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </button>
+                    </dd>
+                </div><!--//media-body-->
+            </div><!--//media-->
+        </div><!--//item-->
+    </div>
+</section>
+<!--打赏模态框-->
+<div class="modal fade" id="rewModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <span class="modal-title">打赏留言</span>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <form id="rewForm" name="rewForm" method="post">
+                <div class="modal-body">
+                    <strong class="payStrong">输入您要打赏的金额:</strong>
+                    <input type="text" id="money" name="money" value="" required/><span
+                        style="margin-left: 3px;">元</span>
+                    <input type="hidden" id="foruser" value="" class="content" style="display:none"/>
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="submit" form="rewForm" id="rewbtn" class="btn btn-primary">
+                        确定
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $("#rewModal").on("show.bs.modal",function (event) {
+        var btnThis=$(event.relatedTarget);
+        var modal=$(this);
+        var modalId=btnThis.data('orderid');
+        modal.find('.content').val(modalId);
+    });
+    $('#rewbtn').click(function () {
+        var toid=document.getElementById("foruser").value;
+        var money=document.getElementById("money").value;
+        var sendData={"money":money,"foruser":toid};
+        // alert("moey: "+money+" tiid "+toid);
+        var options = {
+            url:       'person/rewMoney',         // override for form's 'action' attribute
+            data: sendData,
+            dataType:  'json',        // 'xml', 'script', or 'json' (expected server response type)
+            clearForm: true,       // clear all form fields after successful submit
+            beforeSubmit:  judge,  // pre-submit callback
+            success:  function(data){
+                    alert("打赏成功");
+                    $('#rewModal').modal('hide');
+                    window.location.reload();
+            },
+            error: function () {
+                alert("打赏失败");
+                $('#rewModal').modal('hide');
+            }
+        };
+        $('#rewForm').ajaxForm(options);
+
+    });
+    function showResponse(response)  {
+        $('#rewModal').modal('hide');
+        alert("打赏成功");
+    }
+    function judge() {
+        var read_money=document.forms["rewForm"]["money"].value;
+        if(read_money<=0){
+            alert("请输入正确的金额");
+            return false;
+        }
+       /* var for_user=document.getElementById("foruser").value;*/
+    }
+</script>
+
+
+<!--<div class="jumbotron well">
+    &lt;!&ndash;<h1>
+        Hello, world!
+    </h1>
+    <p>
+        This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
+    </p>&ndash;&gt;
+    <div class="container" tabindex="0" style="margin: 1%;width: 60%;border: 1px dotted #919191;border-radius: 8px;" >
+        <div style="padding:1%">
+                <h2 class="ContentItem-title">
+                        <meta itemprop="name" content="标题">
+                        <a target="_blank"
+                           href="#">标题</a>
+                </h2>
+                <div class="">
+                    <div class=" " style="">
+                        <span class=" " style="" itemprop="text">容蓉蓉让人如果如风哥哥哥哥哥哥哥哥哥哥哥还是顶顶顶顶顶顶顶顶顶顶顶顶sssssssssssssssssss顶顶顶顶顶ahbshavbhjcvashasbhjvsajsabjasbvhjabankjabchabs cnsabncjhbdv jhbsajkcsbahdb hads,bk asb hjb asab jha</span>
+                        <button type="button" class="btn btn-link">阅读全文
+                            <span style="display: inline-flex; align-items: center;"></span>
+                        </button>
+                    </div>
+                    <div class=" " style="float: right">
+                        <button aria-label="赞同" type="button"
+                            class="Button VoteButton VoteButton&#45;&#45;up">
+                            <span style="display: inline-flex; align-items: center;"></span>👍
+                        </button>
+                        <button aria-label="反对" type="button"
+                            class="Button VoteButton VoteButton&#45;&#45;down">
+                            <span style="display: inline-flex; align-items: center;"></span>👎
+                        </button>
+                        <button type="button"
+                                class="Button ContentItem-action Button&#45;&#45;plain Button&#45;&#45;withIcon Button&#45;&#45;withLabel">
+                            <span style="display: inline-flex; align-items: center;"></span>❤
+                        </button>
+                        <button type="button"
+                                class="Button ContentItem-action Button&#45;&#45;plain Button&#45;&#45;withIcon Button&#45;&#45;withLabel">
+                            <span style="display: inline-flex; align-items: center;"></span>🎁
+                        </button>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>-->
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atyume.modules.system.mapper.MoneyLogMapper" >
+  <resultMap id="BaseResultMap" type="com.atyume.modules.system.po.MoneyLog" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="posuser" property="posuser" jdbcType="BIGINT" />
+    <result column="quauser" property="quauser" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+  </resultMap>
+
+</mapper>

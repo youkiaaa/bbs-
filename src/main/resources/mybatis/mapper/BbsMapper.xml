@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atyume.modules.system.mapper.BbsMapper" >
+    <resultMap id="BaseResultMap" type="com.atyume.modules.system.po.Bbs" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="Ctime" property="ctime" jdbcType="TIMESTAMP" />
+        <result column="Etime" property="etime" jdbcType="TIMESTAMP" />
+        <result column="userid" property="userid" jdbcType="BIGINT" />
+    </resultMap>
+    <resultMap id="OutResultMap" type="com.atyume.modules.system.vo.BbsVO" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="Ctime" property="ctime" jdbcType="TIMESTAMP" />
+        <result column="Etime" property="etime" jdbcType="TIMESTAMP" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="picPath" property="picpath" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="queryAllBbs" resultMap="OutResultMap">
+        select sys_bbs.id,sys_bbs.title,sys_bbs.main,sys_bbs.Ctime,sys_bbs.Etime,sys_user.username,sys_avator.picPath
+        from sys_bbs,sys_user,sys_avator
+        where sys_bbs.userid=sys_user.id and sys_avator.userid=sys_bbs.userid and sys_avator.active=1
+    </select>
+</mapper>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="UTF-8">
+    <!-- Content Header (Page header) -->
+    <section class="content-header" style="">
+        <h1>
+            欢迎来到这里
+            <small>RBAC TEST</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
+            <li><a href="#">信息</a></li>
+            <li class="active">个人信息</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="box-body">
+            <div class="header">
+                <input type="hidden" id="picPath" value="${user.picPath}"/>
+                <div id="thisImage"></div>
+                <form method="post" enctype="multipart/form-data">
+                    <p class="modify">
+                        <input type="file" class="file" id="file"/><a href="javascript:;"
+                                                                      id="queryImg">修改头像</a>
+                    </p>
+                </form>
+            </div>
+            <div class="right_c">
+                <div class="right_info">
+                    <div class="id_card">
+                        <span class="id_name"> ID：${user.userName} </span>
+                    </div>
+                </div>
+                <div class="csdn_info">
+			<span
+                    style="margin-right: 16px; color: rgb(77, 77, 77); font-size: 14px;">
+				关注 e${user.concern} </span> <span
+                        styl="margin-right: 16px; color: rgb(77, 77, 77); font-size: 14px;">
+				粉丝 ${user.fans} </span>
+                    <div class="user_hr2"></div>
+                </div>
+                <ul class="self">
+                    <li>昵称：${detail.nickName}</li>
+                    <li>实名：${detail.realName}</li>
+                    <li>性别：${detail.sex==0?"男":"女"}</li>
+                    <li>生日：${detail.birthday}</li>
+                    <li>地区：${detail.region}</li>
+                    <li>行业：${detail.industry}</li>
+                    <li>职位：${detail.position}</li>
+                    <li><span>简介：</span> <span>${detail.introduction}</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+</html>
